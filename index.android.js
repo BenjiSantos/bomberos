@@ -3,7 +3,7 @@
  * https://github.com/facebook/react-native
  * @flow
  */
-
+ const URL = 'https://api.github.com/repos/facebook/react-native';
  const React = require('react');
  const ReactNative = require('react-native');
  const {
@@ -55,6 +55,7 @@ export default class bomberos extends React.Component {
   state = {
     isRefreshing: false,
     loaded: 0,
+    stars: '?',
     rowData: Array.from(new Array(2)).map(
       (val, i) => ({text: 'Initial row ' + i, clicks: 0})),
   };
@@ -65,6 +66,19 @@ export default class bomberos extends React.Component {
       rowData: this.state.rowData,
     });
   };
+
+  componentDidMount() {
+    this.fetchData().done()
+  }
+  /**
+   * Get firefighters data in json format.
+   */
+  async fetchData() {
+    const response = await fetch(URL)
+    const json = await response.json()
+    const stars = json.stargazers_count
+    this.setState({stars})
+  }
 
   render() {
     const rows = this.state.rowData.map((row, ii) => {
@@ -84,6 +98,10 @@ export default class bomberos extends React.Component {
             progressBackgroundColor="#ffff00"
           />
         }>
+        <Text>
+          YOOO
+          React Native has {this.state.stars} stars
+        </Text>
         {rows}
       </ScrollView>
     );
